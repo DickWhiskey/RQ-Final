@@ -5,64 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RuneQuest Dice Roller</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap');
-
         body {
-            font-family: 'Uncial Antiqua', cursive;
+            font-family: Arial, sans-serif;
             text-align: center;
-            margin: 15px;
-            background-color: #3A2E2A;
-            color: #E0C9A6;
-            font-size: 16px;
-            padding: 20px;
-            border: 3px solid #C4A484;
-            border-radius: 10px;
+            margin: 10px;
+            background-color: black;
+            color: white;
+            font-size: 14px;
         }
         #skillResult, #damageResult {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            color: #FFD700;
+            color: white !important;
             margin-top: 10px;
         }
         button {
-            padding: 8px 15px;
-            font-size: 16px;
+            padding: 5px 10px;
+            font-size: 14px;
             cursor: pointer;
             border: none;
-            background-color: #6D4C41;
-            color: #E0C9A6;
+            background-color: #0078D7;
+            color: white;
             border-radius: 5px;
-            margin: 5px;
+            margin: 3px;
         }
         button:hover {
-            background-color: #8E5D4E;
+            background-color: #005fa3;
         }
         input {
             padding: 6px;
-            font-size: 16px;
+            font-size: 14px;
             width: 80px;
             text-align: center;
-            background-color: #E0C9A6;
+            background-color: white;
             color: black;
-            border: 2px solid #8E5D4E;
+            border: 2px solid #0078D7;
             border-radius: 5px;
             margin-bottom: 10px;
         }
         label {
             font-size: 14px;
-            color: #FFD700;
+            color: white;
         }
     </style>
 </head>
 <body>
 
-    <h2 style="font-size: 18px;">⚔️ RuneQuest Skill Roll</h2>
+    <h2 style="font-size: 16px;">⚔️ RuneQuest Skill Roll</h2>
     <label for="skillValue">Skill %:</label>
     <input type="number" id="skillValue" min="1" max="100" value="65">
     <button onclick="rollSkillCheck()">Roll D100</button>
     <p id="skillResult">🎲 Enter skill % and roll</p>
 
-    <h2 style="font-size: 18px;">🔥 RuneQuest Damage & Hit Location</h2>
+    <h2 style="font-size: 16px;">🔥 RuneQuest Damage & Hit Location</h2>
     <label for="diceInputs">Dice (e.g., "2d6,1d8"):</label>
     <input type="text" id="diceInputs" placeholder="2d6,1d8">
     <label for="modifier">Modifier (+/-):</label>
@@ -98,7 +93,7 @@
         function rollDamage() {
             let diceInput = document.getElementById("diceInputs").value.trim();
             let modifier = parseInt(document.getElementById("modifier").value);
-            let diceArray = diceInput.split(',');
+            let diceArray = diceInput ? diceInput.split(',') : [];
             let rolls = [];
             let total = modifier;
 
@@ -114,6 +109,11 @@
                     }
                 }
             });
+
+            if (rolls.length === 0) {
+                document.getElementById("damageResult").innerHTML = "⚠️ Please enter valid dice format!";
+                return;
+            }
 
             let hitLocation = rollHitLocation();
             let resultText = `🔥 You take ${total} damage in the ${hitLocation}!`;
