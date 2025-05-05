@@ -1,295 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>RuneQuest Dice Roller</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #000;
-      color: #fff;
-      text-align: center;
-      margin: 0;
-      padding: 2rem 1rem;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 1.5rem;
-    }
-
-    h2 {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    h3 {
-      font-size: 1.25rem;
-      margin: 1rem 0 0.5rem;
-    }
-
-    p {
-      margin: 0.25rem 0 0.75rem;
-    }
-
-    input[type="number"],
-    input[type="text"] {
-      width: 140px;
-      padding: 0.4rem;
-      font-size: 1rem;
-      text-align: center;
-      border-radius: 5px;
-      border: 1px solid #555;
-      background-color: #111;
-      color: #fff;
-      transition: border-color 0.3s;
-    }
-    input[type="number"]:focus,
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #0078d7;
-    }
-
-    .input-container {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.5rem;
-    }
-
-    button {
-      padding: 0.6rem 1.5rem;
-      font-size: 1rem;
-      cursor: pointer;
-      border: none;
-      border-radius: 5px;
-      background-color: #0078d7;
-      color: #fff;
-      transition: background-color 0.3s;
-      user-select: none;
-    }
-    button:disabled {
-      background-color: #444;
-      cursor: not-allowed;
-    }
-    button:hover:not(:disabled) {
-      background-color: #005fa3;
-    }
-
-    #skillResult,
-    #damageResult {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #ffd700;
-      margin-top: 0.5rem;
-      min-height: 2em;
-    }
-
-    #damageSummary {
-      font-size: 1rem;
-      margin-top: 0.25rem;
-      color: #ccc;
-      min-height: 1.5em;
-    }
-
-    .error {
-      color: #ff4d4d;
-      font-weight: 600;
-      margin-top: 0.25rem;
-      min-height: 1.2em;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuneQuest Dice Roller</title>
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 1rem;
+        }
+        h2 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+        h3 {
+            font-size: 1.2rem;
+            margin: 0.8rem 0 0.5rem;
+        }
+        p {
+            margin: 0.2rem 0 0.6rem;
+            font-size: 1rem;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 0.4rem;
+        }
+        input {
+            width: 110px;
+            padding: 0.3rem;
+            font-size: 0.9rem;
+            text-align: center;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background-color: #111;
+            color: #fff;
+        }
+        button {
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background-color: #0078D7;
+            color: white;
+        }
+        button:hover {
+            background-color: #005fa3;
+        }
+        #skillResult, #damageResult {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #FFD700;
+            margin-top: 0.3rem;
+        }
+        #damageSummary {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+    </style>
 </head>
 <body>
-  <h2>🎲 RuneQuest Dice Roller</h2>
 
-  <section aria-labelledby="skill-roll-title">
-    <h3 id="skill-roll-title">Skill Roll</h3>
-    <label for="skillInput">Enter skill percentage (1–100):</label><br />
-    <input type="number" id="skillInput" min="1" max="100" value="50" aria-describedby="skillError" />
-    <div id="skillError" class="error" aria-live="polite"></div>
-    <button id="rollSkillBtn">Roll Skill</button>
-    <p id="skillResult" aria-live="polite">🎲 Roll your skill!</p>
-  </section>
+    <h2>🎲 RuneQuest Dice Roller</h2>
 
-  <section aria-labelledby="damage-roll-title">
-    <h3 id="damage-roll-title">Damage Roll</h3>
+    <h3>Skill Roll</h3>
+    <p>Enter skill percentage:</p>
+    <input type="number" id="skillInput" min="1" max="100" value="50">
+    <br><br>
+    <button onclick="rollSkill()">Roll Skill</button>
+    <p id="skillResult">🎲 Roll your skill!</p>
+
+    <h3>Damage Roll</h3>
     <div class="input-container">
-      <div>
-        <label for="damageDiceInput">Enter damage dice (e.g., 1d6,2d4):</label><br />
-        <input type="text" id="damageDiceInput" value="1d6,2d4" aria-describedby="damageDiceError" />
-        <div id="damageDiceError" class="error" aria-live="polite"></div>
-      </div>
-      <div>
-        <label for="damageBonusInput">Enter bonus:</label><br />
-        <input type="number" id="damageBonusInput" value="0" />
-      </div>
+        <div>
+            <p>Damage Dice (e.g., 1d6,2d4):</p>
+            <input type="text" id="damageDiceInput" value="1d6,2d4">
+        </div>
+        <div>
+            <p>Bonus:</p>
+            <input type="number" id="damageBonusInput" value="0">
+        </div>
     </div>
-    <button id="rollDamageBtn">Roll Damage</button>
-    <p id="damageSummary" aria-live="polite"></p>
-    <p id="damageResult" aria-live="polite">💥 Roll your damage!</p>
-  </section>
+    <button onclick="rollDamage()">Roll Damage</button>
+    <p id="damageSummary"></p>
+    <p id="damageResult">💥 Roll your damage!</p>
 
-  <script>
-    // Hit locations for damage rolls
-    const hitLocations = [
-      "Head",
-      "Chest",
-      "Abdomen",
-      "Right Arm",
-      "Left Arm",
-      "Right Leg",
-      "Left Leg",
-    ];
+    <script>
+        const hitLocations = ["Head", "Chest", "Abdomen", "Right Arm", "Left Arm", "Right Leg", "Left Leg"];
 
-    // Elements
-    const skillInput = document.getElementById("skillInput");
-    const skillError = document.getElementById("skillError");
-    const rollSkillBtn = document.getElementById("rollSkillBtn");
-    const skillResult = document.getElementById("skillResult");
+        function rollSkill() {
+            let skill = parseInt(document.getElementById("skillInput").value);
+            let roll = Math.floor(Math.random() * 100) + 1;
+            
+            let result;
+            if (roll <= skill / 20) {
+                result = "**Critical Success!**";
+            } else if (roll <= skill / 5) {
+                result = "**Special Success!**";
+            } else if (roll <= skill) {
+                result = "**Success!**";
+            } else if (roll >= 96) {
+                result = "**Fumble!**";
+            } else {
+                result = "**Failure.**";
+            }
 
-    const damageDiceInput = document.getElementById("damageDiceInput");
-    const damageDiceError = document.getElementById("damageDiceError");
-    const damageBonusInput = document.getElementById("damageBonusInput");
-    const rollDamageBtn = document.getElementById("rollDamageBtn");
-    const damageSummary = document.getElementById("damageSummary");
-    const damageResult = document.getElementById("damageResult");
-
-    // Utility: Roll a single die of given sides
-    function rollDie(sides) {
-      return Math.floor(Math.random() * sides) + 1;
-    }
-
-    // Validate skill input
-    function validateSkill() {
-      const skill = Number(skillInput.value);
-      if (isNaN(skill) || skill < 1 || skill > 100) {
-        skillError.textContent = "Please enter a skill value between 1 and 100.";
-        return false;
-      }
-      skillError.textContent = "";
-      return true;
-    }
-
-    // Validate damage dice input
-    function validateDamageDice() {
-      const input = damageDiceInput.value.trim();
-      if (!input) {
-        damageDiceError.textContent = "Please enter at least one dice expression.";
-        return false;
-      }
-
-      // Regex to match dice expressions like 1d6, 2d4 etc.
-      const diceParts = input.split(",").map(part => part.trim());
-      const diceRegex = /^\d+d\d+$/;
-
-      for (const part of diceParts) {
-        if (!diceRegex.test(part)) {
-          damageDiceError.textContent = `Invalid dice format: "${part}". Use format like 1d6,2d4.`;
-          return false;
-        }
-      }
-
-      damageDiceError.textContent = "";
-      return true;
-    }
-
-    // Skill roll logic
-    function rollSkill() {
-      if (!validateSkill()) {
-        skillResult.textContent = "⚠️ Invalid skill input.";
-        return;
-      }
-
-      const skill = Number(skillInput.value);
-      const roll = rollDie(100);
-
-      let result = "";
-      if (roll <= skill / 20) {
-        result = "✨ Critical Success!";
-      } else if (roll <= skill / 5) {
-        result = "🌟 Special Success!";
-      } else if (roll <= skill) {
-        result = "✅ Success!";
-      } else if (roll >= 96) {
-        result = "💥 Fumble!";
-      } else {
-        result = "❌ Failure.";
-      }
-
-      skillResult.textContent = `${result} (Rolled: ${roll} vs Skill: ${skill})`;
-    }
-
-    // Damage roll logic
-    function rollDamage() {
-      if (!validateDamageDice()) {
-        damageSummary.textContent = "";
-        damageResult.textContent = "⚠️ Invalid damage dice input.";
-        return;
-      }
-
-      const diceInput = damageDiceInput.value.trim();
-      const bonus = Number(damageBonusInput.value) || 0;
-      const hitLocation =
-        hitLocations[Math.floor(Math.random() * hitLocations.length)];
-
-      let totalDamage = bonus;
-      const diceRolls = [];
-
-      // Parse dice expressions like "1d6,2d4"
-      const diceComponents = diceInput.split(",").map((d) => d.trim());
-
-      for (const component of diceComponents) {
-        const [numDiceStr, diceTypeStr] = component.split("d");
-        const numDice = Number(numDiceStr);
-        const diceType = Number(diceTypeStr);
-
-        if (
-          isNaN(numDice) ||
-          numDice < 1 ||
-          isNaN(diceType) ||
-          diceType < 2
-        ) {
-          damageSummary.textContent = "";
-          damageResult.textContent = `⚠️ Invalid dice component: ${component}`;
-          return;
+            document.getElementById("skillResult").innerHTML = `✨ ${result} (Rolled: ${roll} vs Skill: ${skill})`;
         }
 
-        for (let i = 0; i < numDice; i++) {
-          const roll = rollDie(diceType);
-          diceRolls.push(roll);
-          totalDamage += roll;
+        function rollDamage() {
+            let diceInput = document.getElementById("damageDiceInput").value;
+            let bonus = parseInt(document.getElementById("damageBonusInput").value);
+            let hitLocation = hitLocations[Math.floor(Math.random() * hitLocations.length)];
+            let totalDamage = bonus;
+            let formattedDice = [];
+            
+            let diceComponents = diceInput.match(/(\d+d\d+)/g);
+            diceComponents.forEach(component => {
+                let [numDice, diceType] = component.split("d").map(Number);
+                for (let i = 0; i < numDice; i++) {
+                    let roll = Math.floor(Math.random() * diceType) + 1;
+                    totalDamage += roll;
+                    formattedDice.push(roll);
+                }
+            });
+
+            document.getElementById("damageSummary").innerHTML = `📝 ${diceInput} + ${bonus} → (${formattedDice.join(", ")})`;
+            document.getElementById("damageResult").innerHTML = `💥 **You take ${totalDamage} damage to ${hitLocation}!**`;
         }
-      }
+    </script>
 
-      damageSummary.textContent = `📝 Damage Rolls: ${diceInput} + ${bonus} → (${diceRolls.join(
-        ", "
-      )})`;
-      damageResult.textContent = `💥 You take ${totalDamage} damage to ${hitLocation}!`;
-    }
-
-    // Event listeners
-    rollSkillBtn.addEventListener("click", rollSkill);
-    rollDamageBtn.addEventListener("click", rollDamage);
-
-    // Optional: Validate inputs on change to enable/disable buttons
-    function updateSkillButtonState() {
-      rollSkillBtn.disabled = !validateSkill();
-    }
-    function updateDamageButtonState() {
-      rollDamageBtn.disabled = !validateDamageDice();
-    }
-
-    skillInput.addEventListener("input", updateSkillButtonState);
-    damageDiceInput.addEventListener("input", updateDamageButtonState);
-
-    // Initialize button states
-    updateSkillButtonState();
-    updateDamageButtonState();
-  </script>
 </body>
 </html>
 
