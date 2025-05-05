@@ -15,7 +15,7 @@
             padding: 20px;
             border-radius: 10px;
         }
-        #result {
+        #skillResult, #damageResult {
             font-size: 22px;
             font-weight: bold;
             color: #FFD700;
@@ -43,24 +43,37 @@
 <body>
 
     <h2 style="font-size: 18px;">🎲 RuneQuest Dice Roller</h2>
+
+    <h3>Skill Roll</h3>
     <p>Enter skill percentage:</p>
     <input type="number" id="skill" min="1" max="100" value="50">
     <p>Enter bonus modifier:</p>
-    <input type="number" id="bonus" value="0">
+    <input type="number" id="skillBonus" value="0">
     <br><br>
-    <button onclick="rollDice()">Roll Dice</button>
-    <p id="summary"></p>
-    <p id="result">🎲 Roll to see your fate!</p>
+    <button onclick="rollSkill()">Roll Skill</button>
+    <p id="skillSummary"></p>
+    <p id="skillResult">🎲 Roll your skill!</p>
+
+    <h3>Damage Roll</h3>
+    <p>Enter number of dice:</p>
+    <input type="number" id="numDice" min="1" value="1">
+    <p>Enter type of dice (e.g., 6 for d6):</p>
+    <input type="number" id="diceType" min="2" value="6">
+    <p>Enter damage bonus:</p>
+    <input type="number" id="damageBonus" value="0">
+    <br><br>
+    <button onclick="rollDamage()">Roll Damage</button>
+    <p id="damageSummary"></p>
+    <p id="damageResult">💥 Roll your damage!</p>
 
     <script>
         const hitLocations = [
             "Head", "Chest", "Abdomen", "Right Arm", "Left Arm", "Right Leg", "Left Leg"
         ];
 
-        function rollDice() {
+        function rollSkill() {
             let skill = parseInt(document.getElementById("skill").value);
-            let bonus = parseInt(document.getElementById("bonus").value);
-            
+            let bonus = parseInt(document.getElementById("skillBonus").value);
             let roll = Math.floor(Math.random() * 100) + 1;
             let total = roll + bonus;
             let hitLocation = hitLocations[Math.floor(Math.random() * hitLocations.length)];
@@ -72,8 +85,26 @@
                 success = "**Failure.**";
             }
 
-            document.getElementById("summary").innerHTML = `📝 Dice Rolled: d100 (${roll}) + Bonus (${bonus}) = ${total}`;
-            document.getElementById("result").innerHTML = `✨ ${success} (Rolled: ${roll} vs Skill: ${skill})<br>💥 Hit Location: **${hitLocation}** ✨`;
+            document.getElementById("skillSummary").innerHTML = `📝 Skill Roll: d100 (${roll}) + Bonus (${bonus}) = ${total}`;
+            document.getElementById("skillResult").innerHTML = `✨ ${success} (Rolled: ${roll} vs Skill: ${skill})<br>💥 Hit Location: **${hitLocation}** ✨`;
+        }
+
+        function rollDamage() {
+            let numDice = parseInt(document.getElementById("numDice").value);
+            let diceType = parseInt(document.getElementById("diceType").value);
+            let bonus = parseInt(document.getElementById("damageBonus").value);
+            
+            let totalDamage = bonus;
+            let diceRolls = [];
+            
+            for (let i = 0; i < numDice; i++) {
+                let roll = Math.floor(Math.random() * diceType) + 1;
+                totalDamage += roll;
+                diceRolls.push(roll);
+            }
+
+            document.getElementById("damageSummary").innerHTML = `📝 Damage Rolls: (${diceRolls.join(", ")}) + Bonus (${bonus})`;
+            document.getElementById("damageResult").innerHTML = `💥 Total Damage: **${totalDamage}**`;
         }
     </script>
 
