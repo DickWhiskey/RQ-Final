@@ -6,130 +6,74 @@
     <title>RuneQuest Dice Roller</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Arial", sans-serif;
             text-align: center;
             margin: 10px;
-            background-color: black !important;
-
+            background-color: black;
             color: white;
-            font-size: 14px;
-        }
-        #skillResult, #damageResult {
             font-size: 16px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        #result {
+            font-size: 22px;
             font-weight: bold;
-            color: white !important;
+            color: #FFD700;
+            margin-top: 10px;
+        }
+        #summary {
+            font-size: 18px;
             margin-top: 10px;
         }
         button {
-            padding: 5px 10px;
-            font-size: 14px;
+            padding: 10px 20px;
+            font-size: 16px;
             cursor: pointer;
             border: none;
             background-color: #0078D7;
             color: white;
             border-radius: 5px;
-            margin: 3px;
+            margin: 5px;
         }
         button:hover {
             background-color: #005fa3;
-        }
-        input {
-            padding: 6px;
-            font-size: 14px;
-            width: 80px;
-            text-align: center;
-            background-color: white;
-            color: black;
-            border: 2px solid #0078D7;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        label {
-            font-size: 14px;
-            color: white;
         }
     </style>
 </head>
 <body>
 
-    <h2 style="font-size: 16px;">⚔️ RuneQuest Skill Roll</h2>
-    <label for="skillValue">Skill %:</label>
-    <input type="number" id="skillValue" min="1" max="100" value="65">
-    <button onclick="rollSkillCheck()">Roll D100</button>
-    <p id="skillResult">🎲 Enter skill % and roll</p>
-
-    <h2 style="font-size: 16px;">🔥 RuneQuest Damage & Hit Location</h2>
-    <label for="diceInputs">Dice (e.g., "2d6,1d8"):</label>
-    <input type="text" id="diceInputs" placeholder="2d6,1d8">
-    <label for="modifier">Modifier (+/-):</label>
-    <input type="number" id="modifier" value="0">
-    <button onclick="rollDamage()">Roll Damage & Hit Location</button>
-    <p id="damageResult">🎲 Enter dice and roll</p>
+    <h2 style="font-size: 18px;">🎲 RuneQuest Dice Roller</h2>
+    <p>Enter skill percentage:</p>
+    <input type="number" id="skill" min="1" max="100" value="50">
+    <p>Enter bonus modifier:</p>
+    <input type="number" id="bonus" value="0">
+    <br><br>
+    <button onclick="rollDice()">Roll Dice</button>
+    <p id="summary"></p>
+    <p id="result">🎲 Roll to see your fate!</p>
 
     <script>
-        function rollSkillCheck() {
-            let skillValue = parseInt(document.getElementById("skillValue").value);
+        const hitLocations = [
+            "Head", "Chest", "Abdomen", "Right Arm", "Left Arm", "Right Leg", "Left Leg"
+        ];
+
+        function rollDice() {
+            let skill = parseInt(document.getElementById("skill").value);
+            let bonus = parseInt(document.getElementById("bonus").value);
+            
             let roll = Math.floor(Math.random() * 100) + 1;
-            let criticalThreshold = Math.floor(skillValue / 20);
-            let specialThreshold = Math.floor(skillValue / 5);
-            let failureThreshold = 100 - skillValue;
-            let fumbleThreshold = Math.ceil(failureThreshold / 20);
-            let resultText = `⚔️ You rolled ${roll} → `;
+            let total = roll + bonus;
+            let hitLocation = hitLocations[Math.floor(Math.random() * hitLocations.length)];
 
-            if (roll >= (100 - fumbleThreshold + 1)) {
-                resultText += "☠️ **Fumble!**";
-            } else if (roll <= criticalThreshold) {
-                resultText += "🌟 **Critical Success!**";
-            } else if (roll <= specialThreshold) {
-                resultText += "✨ **Special Success!**";
-            } else if (roll <= skillValue) {
-                resultText += "**Success!**";
+            let success;
+            if (roll <= skill) {
+                success = "**Success!**";
             } else {
-                resultText += "❌ **Failure.**";
+                success = "**Failure.**";
             }
 
-            document.getElementById("skillResult").innerHTML = resultText;
-        }
-
-        function rollDamage() {
-            let diceInput = document.getElementById("diceInputs").value.trim();
-            let modifier = parseInt(document.getElementById("modifier").value);
-            let diceArray = diceInput ? diceInput.split(',') : [];
-            let rolls = [];
-            let total = modifier;
-
-            diceArray.forEach(dice => {
-                let match = dice.match(/^(\d+)d(\d+)$/);
-                if (match) {
-                    let count = parseInt(match[1]);
-                    let sides = parseInt(match[2]);
-                    for (let i = 0; i < count; i++) {
-                        let roll = Math.floor(Math.random() * sides) + 1;
-                        rolls.push(roll);
-                        total += roll;
-                    }
-                }
-            });
-
-            if (rolls.length === 0) {
-                document.getElementById("damageResult").innerHTML = "⚠️ Please enter valid dice format!";
-                return;
-            }
-
-            let hitLocation = rollHitLocation();
-            let resultText = `🔥 You take ${total} damage in the ${hitLocation}!`;
-            document.getElementById("damageResult").innerHTML = resultText;
-        }
-
-        function rollHitLocation() {
-            let roll = Math.floor(Math.random() * 20) + 1;
-            if (roll >= 1 && roll <= 4) return "Right Leg";
-            if (roll >= 5 && roll <= 8) return "Left Leg";
-            if (roll >= 9 && roll <= 11) return "Abdomen";
-            if (roll == 12) return "Chest";
-            if (roll >= 13 && roll <= 15) return "Right Arm";
-            if (roll >= 16 && roll <= 18) return "Left Arm";
-            if (roll >= 19 && roll <= 20) return "Head";
+            document.getElementById("summary").innerHTML = `📝 Dice Rolled: d100 (${roll}) + Bonus (${bonus}) = ${total}`;
+            document.getElementById("result").innerHTML = `✨ ${success} (Rolled: ${roll} vs Skill: ${skill})<br>💥 Hit Location: **${hitLocation}** ✨`;
         }
     </script>
 
