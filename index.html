@@ -47,20 +47,13 @@
     <h3>Skill Roll</h3>
     <p>Enter skill percentage:</p>
     <input type="number" id="skill" min="1" max="100" value="50">
-    <p>Enter bonus modifier:</p>
-    <input type="number" id="skillBonus" value="0">
     <br><br>
     <button onclick="rollSkill()">Roll Skill</button>
-    <p id="skillSummary"></p>
     <p id="skillResult">🎲 Roll your skill!</p>
 
     <h3>Damage Roll</h3>
-    <p>Enter number of dice:</p>
-    <input type="number" id="numDice" min="1" value="1">
-    <p>Enter type of dice (e.g., 6 for d6):</p>
-    <input type="number" id="diceType" min="2" value="6">
-    <p>Enter damage bonus:</p>
-    <input type="number" id="damageBonus" value="0">
+    <p>Enter damage dice (e.g., 1d4+2d6+3):</p>
+    <input type="text" id="damageDice" value="1d6+2d4+3">
     <br><br>
     <button onclick="rollDamage()">Roll Damage</button>
     <p id="damageSummary"></p>
@@ -73,38 +66,46 @@
 
         function rollSkill() {
             let skill = parseInt(document.getElementById("skill").value);
-            let bonus = parseInt(document.getElementById("skillBonus").value);
             let roll = Math.floor(Math.random() * 100) + 1;
-            let total = roll + bonus;
-            let hitLocation = hitLocations[Math.floor(Math.random() * hitLocations.length)];
-
-            let success;
-            if (roll <= skill) {
-                success = "**Success!**";
+            
+            let result;
+            if (roll <= skill / 20) {
+                result = "**Critical Success!**";
+            } else if (roll <= skill / 5) {
+                result = "**Special Success!**";
+            } else if (roll <= skill) {
+                result = "**Success!**";
+            } else if (roll >= 96) {
+                result = "**Fumble!**";
             } else {
-                success = "**Failure.**";
+                result = "**Failure.**";
             }
 
-            document.getElementById("skillSummary").innerHTML = `📝 Skill Roll: d100 (${roll}) + Bonus (${bonus}) = ${total}`;
-            document.getElementById("skillResult").innerHTML = `✨ ${success} (Rolled: ${roll} vs Skill: ${skill})<br>💥 Hit Location: **${hitLocation}** ✨`;
+            document.getElementById("skillResult").innerHTML = `✨ ${result} (Rolled: ${roll} vs Skill: ${skill})`;
         }
 
         function rollDamage() {
-            let numDice = parseInt(document.getElementById("numDice").value);
-            let diceType = parseInt(document.getElementById("diceType").value);
-            let bonus = parseInt(document.getElementById("damageBonus").value);
+            let input = document.getElementById("damageDice").value;
+            let hitLocation = hitLocations[Math.floor(Math.random() * hitLocations.length)];
+            let totalDamage = 0;
+            let formattedDice = [];
             
-            let totalDamage = bonus;
-            let diceRolls = [];
-            
-            for (let i = 0; i < numDice; i++) {
-                let roll = Math.floor(Math.random() * diceType) + 1;
-                totalDamage += roll;
-                diceRolls.push(roll);
-            }
+            let diceComponents = input.match(/(\d+d\d+)|(\d+)/g);
+            diceComponents.forEach(component => {
+                if (component.includes("d")) {
+                    let [numDice, diceType] = component.split("d").map(Number);
+                    for (let i = 0; i < numDice; i++) {
+                        let roll = Math.floor(Math.random() * diceType) + 1;
+                        totalDamage += roll;
+                        formattedDice.push(roll);
+                    }
+                } else {
+                    totalDamage += parseInt(component);
+                }
+            });
 
-            document.getElementById("damageSummary").innerHTML = `📝 Damage Rolls: (${diceRolls.join(", ")}) + Bonus (${bonus})`;
-            document.getElementById("damageResult").innerHTML = `💥 Total Damage: **${totalDamage}**`;
+            document.getElementById("damageSummary").innerHTML = `📝 Damage Rolls: ${input} → (${formattedDice.join(", ")})`;
+            document.getElementById("damageResult").innerHTML = `💥 **You take ${totalDamage} damage to ${hitLocation}!**`;
         }
     </script>
 
